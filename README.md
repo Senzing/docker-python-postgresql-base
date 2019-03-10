@@ -19,7 +19,6 @@ building apps with Senzing.
     1. [Run docker container](#run-docker-container)
 1. [Develop](#develop)
     1. [Prerequisite software](#prerequisite-software)
-    1. [Set environment variables for development](#set-environment-variables-for-development)
     1. [Clone repository](#clone-repository)
     1. [Build docker image for development](#build-docker-image-for-development)
 
@@ -58,12 +57,14 @@ sudo docker build \
 
 - **SENZING_DATABASE_URL** -
   Database URI in the form: `${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}`
+- **SENZING_DEBUG** -
+  Enable debug information. Values: [0..1]. Default: 0.
 - **SENZING_DIR** -
   Location of Senzing libraries. Default: "/opt/senzing".
 
 ### Run docker container
 
-1. Variation #2 - Run the docker container with external database and volumes.  Example:
+1. Variation #1 - Run the docker container with external database and volumes.  Example:
 
     ```console
     export DATABASE_PROTOCOL=postgresql
@@ -74,15 +75,17 @@ sudo docker build \
     export DATABASE_DATABASE=G2
 
     export SENZING_DATABASE_URL="${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
+    export SENZING_DEBUG=1
     export SENZING_DIR=/opt/senzing
 
     sudo docker run -it  \
       --volume ${SENZING_DIR}:/opt/senzing \
       --env SENZING_DATABASE_URL="${SENZING_DATABASE_URL}" \
+      --env SENZING_DEBUG=${SENZING_DEBUG} \
       senzing/python-postgresql-base
     ```
 
-1. Variation #3 - Run the docker container accessing an external database in a docker network. Example:
+1. Variation #2 - Run the docker container accessing an external database in a docker network. Example:
 
    Determine docker network. Example:
 
@@ -96,11 +99,11 @@ sudo docker build \
     Run docker container. Example:
 
     ```console
-    export DATABASE_PROTOCOL=mysql
-    export DATABASE_USERNAME=root
-    export DATABASE_PASSWORD=root
-    export DATABASE_HOST=senzing-mysql
-    export DATABASE_PORT=3306
+    export DATABASE_PROTOCOL=postgresql
+    export DATABASE_USERNAME=postgres
+    export DATABASE_PASSWORD=postgres
+    export DATABASE_HOST=senzing-postgresql
+    export DATABASE_PORT=5432
     export DATABASE_DATABASE=G2
 
     export SENZING_DATABASE_URL="${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
@@ -147,48 +150,38 @@ The following software programs need to be installed.
     sudo docker run hello-world
     ```
 
-### Set environment variables for development
+### Clone repository
 
-1. These variables may be modified, but do not need to be modified.
-   The variables are used throughout the installation procedure.
+1. Set these environment variable values:
 
     ```console
     export GIT_ACCOUNT=senzing
-    export GIT_REPOSITORY=docker-python-base
-    export DOCKER_IMAGE_TAG=senzing/python-base
+    export GIT_REPOSITORY=docker-python-postgres-base
     ```
 
-1. Synthesize environment variables.
+   Then follow steps in [clone-repository](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/clone-repository.md).
+
+1. After the repository has been cloned, be sure the following are set:
 
     ```console
     export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
     export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
-    export GIT_REPOSITORY_URL="git@github.com:${GIT_ACCOUNT}/${GIT_REPOSITORY}.git"
-    ```
-
-### Clone repository
-
-1. Get repository.
-
-    ```console
-    mkdir --parents ${GIT_ACCOUNT_DIR}
-    cd  ${GIT_ACCOUNT_DIR}
-    git clone ${GIT_REPOSITORY_URL}
     ```
 
 ### Build docker image for development
 
-1. Variation #1 - Using make command
+1. Variation #1 - Using make command.
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
     sudo make docker-build
     ```
 
-1. Variation #2 - Using docker command
+1. Variation #2 - Using docker command.
 
     ```console
-    cd ${GIT_REPOSITORY_DIR}
-    sudo docker build --tag ${DOCKER_IMAGE_TAG} .
-    ```
+    export DOCKER_IMAGE_NAME=senzing/python-postgresql-base
 
+    cd ${GIT_REPOSITORY_DIR}
+    sudo docker build --tag ${DOCKER_IMAGE_NAME} .
+    ```
