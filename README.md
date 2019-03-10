@@ -170,14 +170,16 @@ The following software programs need to be installed.
 
 ### Build docker image for development
 
-1. Variation #1 - Using make command.
+1. Variation #1 - Using `make` command.
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
     sudo make docker-build
     ```
 
-1. Variation #2 - Using docker command.
+    Note: `sudo make docker-build-base` can be used to create cached docker layers.
+
+1. Variation #2 - Using `docker` command.
 
     ```console
     export DOCKER_IMAGE_NAME=senzing/python-postgresql-base
