@@ -58,7 +58,7 @@ sudo docker build \
 - **SENZING_DATABASE_URL** -
   Database URI in the form: `${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}`
 - **SENZING_DEBUG** -
-  Enable debug information. Values: [0..1]. Default: 0.
+  Enable debug information. Values: 0=no debug; 1=debug. Default: 0.
 - **SENZING_DIR** -
   Location of Senzing libraries. Default: "/opt/senzing".
 
