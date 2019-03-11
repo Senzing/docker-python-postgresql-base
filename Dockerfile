@@ -14,14 +14,22 @@ RUN apk --update add \
     krb5-libs \
     libgcc \
     libstdc++ \
+    openssl-dev \
     postgresql-client \
     python \
     py-pip \
  && rm -rf /var/cache/apk/*
 
+# Make soft links.
+
+RUN ln -s /lib/libcrypto.so.1.1 /lib/libcrypto.so.10 \
+ && ln -s /lib/libssl.so.1.1    /lib/libssl.so.10
+
+# Set environment variables.
+
 ENV SENZING_ROOT=/opt/senzing
 ENV PYTHONPATH=${SENZING_ROOT}/g2/python
-ENV LD_LIBRARY_PATH=${SENZING_ROOT}/g2/lib:${SENZING_ROOT}/g2/lib/debian
+ENV LD_LIBRARY_PATH=${SENZING_ROOT}/g2/lib
 
 # Copy files from repository.
 

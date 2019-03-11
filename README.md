@@ -64,7 +64,21 @@ sudo docker build \
 
 ### Run docker container
 
-1. Variation #1 - Run the docker container with external database and volumes.  Example:
+#### Variation 1
+
+1. Run the docker container with internal SQLite database and external volume.  Example:
+
+    ```console
+    export SENZING_DIR=/opt/senzing
+
+    sudo docker run -it  \
+      --volume ${SENZING_DIR}:/opt/senzing \
+      senzing/python-postgresql-base
+    ```
+
+#### Variation 2
+
+1. Run the docker container with external database and volumes.  Example:
 
     ```console
     export DATABASE_PROTOCOL=postgresql
@@ -75,17 +89,17 @@ sudo docker build \
     export DATABASE_DATABASE=G2
 
     export SENZING_DATABASE_URL="${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
-    export SENZING_DEBUG=1
     export SENZING_DIR=/opt/senzing
 
     sudo docker run -it  \
       --volume ${SENZING_DIR}:/opt/senzing \
       --env SENZING_DATABASE_URL="${SENZING_DATABASE_URL}" \
-      --env SENZING_DEBUG=${SENZING_DEBUG} \
       senzing/python-postgresql-base
     ```
 
-1. Variation #2 - Run the docker container accessing an external database in a docker network. Example:
+#### Variation 3
+
+1. Run the docker container accessing an external database in a docker network. Example:
 
    Determine docker network. Example:
 
