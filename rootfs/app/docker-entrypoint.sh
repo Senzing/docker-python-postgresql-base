@@ -32,8 +32,11 @@ fi
 # Short-circuit if SENZING_DATABASE_URL not specified.
 
 if [ -z "${SENZING_DATABASE_URL}" ]; then
-  echo "Using internal database"
+  if [ ${DEBUG} -gt 0 ]; then
+    echo "Using internal SQLite database"
+  fi
   echo "$(date)" >> ${SENTINEL_FILE}
+  exec $@
   exit ${OK}
 fi
 
