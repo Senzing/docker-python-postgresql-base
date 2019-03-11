@@ -10,6 +10,10 @@ LABEL Name="senzing/python-postgresql-base" \
 
 RUN apk --update add \
     bash \
+    gcompat \
+    krb5-libs \
+    libgcc \
+    libstdc++ \
     postgresql-client \
     python \
     py-pip \
@@ -17,7 +21,7 @@ RUN apk --update add \
 
 ENV SENZING_ROOT=/opt/senzing
 ENV PYTHONPATH=${SENZING_ROOT}/g2/python
-ENV LD_LIBRARY_PATH=${SENZING_ROOT}/g2/lib
+ENV LD_LIBRARY_PATH=${SENZING_ROOT}/g2/lib:${SENZING_ROOT}/g2/lib/debian
 
 # Copy files from repository.
 
