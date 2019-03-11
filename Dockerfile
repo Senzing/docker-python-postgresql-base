@@ -6,15 +6,21 @@ ENV REFRESHED_AT=2019-03-09
 LABEL Name="senzing/python-postgresql-base" \
       Version="1.0.0"
 
+# Add Alpine repository.
+
+ENV ALPINE_MIRROR "http://dl-cdn.alpinelinux.org/alpine"
+RUN echo "${ALPINE_MIRROR}/edge/main" >> /etc/apk/repositories
+
 # Alpine package repository: https://pkgs.alpinelinux.org/packages
 
 RUN apk --update add \
     bash \
     gcompat \
     krb5-libs \
+    libcrypto1.1 \
     libgcc \
+    libssl1.1 \
     libstdc++ \
-    openssl-dev \
     postgresql-client \
     python \
     py-pip \
