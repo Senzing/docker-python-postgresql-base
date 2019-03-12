@@ -16,6 +16,25 @@ SENTINEL_FILE=${SENZING_ROOT}/docker-runs.sentinel
 OK=0
 NOT_OK=1
 
+# Construct the FINAL_COMMAND.
+
+SENZING_COMMAND=${SENZING_COMMAND:-""}
+FINAL_COMMAND_STRING="${SENZING_COMMAND} $@"
+FINAL_COMMAND=("${FINAL_COMMAND_STRING}")
+FINAL_COMMAND="$@"
+
+
+if [ ${DEBUG} -gt 0 ]; then
+  echo "SENZING_COMMAND: ${SENZING_COMMAND}"
+  echo "FINAL_COMMAND_STRING: ${FINAL_COMMAND_STRING}"
+  echo "FINAL_COMMAND: ${FINAL_COMMAND}"
+  i=0
+  for token in ${FINAL_COMMAND}; do
+    i=$[$i +1]
+    echo "token $i: ${token}"
+  done
+fi
+
 # Short-circuit for certain commandline options.
 
 if [ "$1" == "--version" ]; then
@@ -36,7 +55,7 @@ if [ -z "${SENZING_DATABASE_URL}" ]; then
     echo "Using internal SQLite database"
   fi
   echo "$(date)" >> ${SENTINEL_FILE}
-  exec $@
+  exec ${FINAL_COMMAND}
   exit ${OK}
 fi
 
@@ -97,13 +116,22 @@ fi
 
 if [ "${PROTOCOL}" == "mysql" ]; then
 
+  cp /etc/odbc.ini.mysql-template /etc/odbc.ini
   sed -i.$(date +%s) \
     -e "s/{SCHEMA}/${SCHEMA}/" \
     -e "s/{DRIVER}/${UPPERCASE_DRIVER}/" \
     -e "s/{HOST}/${HOST}/" \
     -e "s/{PORT}/${PORT}/" \
+    -e "s/{USERNAME}/${USERNAME}/" \
+    -e "s/{PASSWORD}/${PASSWORD}/" \
     -e "s/{SCHEMA}/${SCHEMA}/" \
     /etc/odbc.ini
+
+  if [ ${DEBUG} -gt 0 ]; then
+    echo "---------- /etc/odbc.ini ------------------------------------------------------"
+    cat /etc/odbc.ini
+    echo "-------------------------------------------------------------------------------"
+  fi
 
 # -----------------------------------------------------------------------------
 # Handle "postgresql" protocol.
@@ -111,7 +139,26 @@ if [ "${PROTOCOL}" == "mysql" ]; then
 
 elif [ "${PROTOCOL}" == "postgresql" ]; then
 
-  true  # Need a statement in bash if/else
+  cp /etc/odbc.ini.postgresql-template /etc/odbc.ini
+  sed -i.$(date +%s) \
+    -e "s/{SCHEMA}/${SCHEMA}/" \
+    -e "s/{DRIVER}/${UPPERCASE_DRIVER}/" \
+    -e "s/{HOST}/${HOST}/" \
+    -e "s/{PORT}/${PORT}/" \
+    -e "s/{USERNAME}/${USERNAME}/" \
+    -e "s/{PASSWORD}/${PASSWORD}/" \
+    -e "s/{SCHEMA}/${SCHEMA}/" \
+    /etc/odbc.ini
+
+  cp /etc/odbcinst.ini.postgresql-template /etc/odbcinst.ini
+
+  if [ ${DEBUG} -gt 0 ]; then
+    echo "---------- /etc/odbc.ini ------------------------------------------------------"
+    cat /etc/odbc.ini
+    echo "---------- /etc/odbcinst.ini --------------------------------------------------"
+    cat /etc/odbcinst.ini
+    echo "-------------------------------------------------------------------------------"
+  fi
 
 # -----------------------------------------------------------------------------
 # Handle "db2" protocol.
@@ -124,17 +171,29 @@ elif [ "${PROTOCOL}" == "db2" ]; then
     -e "\$a[${UPPERCASE_DRIVER}]\nDescription = Db2 ODBC Driver\nDriver = /opt/IBM/db2/clidriver/lib/libdb2o.so\nFileUsage = 1\ndontdlclose = 1\n" \
     /etc/odbcinst.ini
 
+  cp /etc/odbc.ini.db2-template /etc/odbc.ini
   sed -i.$(date +%s) \
     -e "s/{HOST}/${HOST}/" \
     -e "s/{PORT}/${PORT}/" \
     -e "s/{SCHEMA}/${SCHEMA}/" \
     /etc/odbc.ini
 
+  cp /opt/IBM/db2/clidriver/cfg/db2dsdriver.cfg.db2-template /opt/IBM/db2/clidriver/cfg/db2dsdriver.cfg
   sed -i.$(date +%s) \
     -e "s/{HOST}/${HOST}/" \
     -e "s/{PORT}/${PORT}/" \
     -e "s/{SCHEMA}/${SCHEMA}/" \
     /opt/IBM/db2/clidriver/cfg/db2dsdriver.cfg
+
+  if [ ${DEBUG} -gt 0 ]; then
+    echo "---------- /etc/odbc.ini ------------------------------------------------------"
+    cat /etc/odbc.ini
+    echo "---------- /etc/odbcinst.ini --------------------------------------------------"
+    cat /etc/odbcinst.ini
+    echo "---------- /opt/IBM/db2/clidriver/cfg/db2dsdriver.cfg -------------------------"
+    cat /opt/IBM/db2/clidriver/cfg/db2dsdriver.cfg
+    echo "-------------------------------------------------------------------------------"
+  fi
 
 fi
 
@@ -143,8 +202,8 @@ fi
 if [ -f ${SENTINEL_FILE} ]; then
   if [ ${DEBUG} -gt 0 ]; then
     echo "Sentinel file ${SENTINEL_FILE} exist. Initialization has already been done."
-  fi  
-  exec $@
+  fi
+  exec ${FINAL_COMMAND}
   exit ${OK}
 fi
 
@@ -196,6 +255,14 @@ sed -i.$(date +%s) \
   -e "s|CONNECTION=sqlite3://na:na@${SENZING_ROOT}/g2/sqldb/G2C.db|CONNECTION=${NEW_SENZING_DATABASE_URL}|" \
   ${SENZING_ROOT}/g2/python/G2Module.ini
 
+if [ ${DEBUG} -gt 0 ]; then
+  echo "---------- g2/python/G2Project.ini --------------------------------------------"
+  cat ${SENZING_ROOT}/g2/python/G2Project.ini
+  echo "---------- g2/python/G2Module.ini ---------------------------------------------"
+  cat ${SENZING_ROOT}/g2/python/G2Module.ini
+  echo "-------------------------------------------------------------------------------"
+fi
+
 # -----------------------------------------------------------------------------
 # Epilog
 # -----------------------------------------------------------------------------
@@ -207,4 +274,4 @@ echo "$(date)" >> ${SENTINEL_FILE}
 
 # Run the command specified by the parameters.
 
-exec $@
+exec ${FINAL_COMMAND}
