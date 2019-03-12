@@ -18,21 +18,10 @@ NOT_OK=1
 
 # Construct the FINAL_COMMAND.
 
-SENZING_COMMAND=${SENZING_COMMAND:-""}
-FINAL_COMMAND_STRING="${SENZING_COMMAND} $@"
-FINAL_COMMAND=("${FINAL_COMMAND_STRING}")
 FINAL_COMMAND="$@"
 
-
 if [ ${DEBUG} -gt 0 ]; then
-  echo "SENZING_COMMAND: ${SENZING_COMMAND}"
-  echo "FINAL_COMMAND_STRING: ${FINAL_COMMAND_STRING}"
   echo "FINAL_COMMAND: ${FINAL_COMMAND}"
-  i=0
-  for token in ${FINAL_COMMAND}; do
-    i=$[$i +1]
-    echo "token $i: ${token}"
-  done
 fi
 
 # Short-circuit for certain commandline options.
