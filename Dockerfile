@@ -31,7 +31,6 @@ RUN apt-get update \
 ENV SENZING_ROOT=/opt/senzing
 ENV PYTHONPATH=${SENZING_ROOT}/g2/python
 ENV LD_LIBRARY_PATH=${SENZING_ROOT}/g2/lib:${SENZING_ROOT}/g2/lib/debian
-ENV SENZING_COMMAND="python"
 
 # Copy files from repository.
 
@@ -40,4 +39,4 @@ COPY ./rootfs /
 # Runtime execution.
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-CMD [""]
+CMD ["python"]
