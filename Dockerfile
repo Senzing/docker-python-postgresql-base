@@ -26,12 +26,17 @@ RUN apt-get update \
       wget \
  && rm -rf /var/lib/apt/lists/*
 
+# Install packages via pip.
+
+RUN pip install \
+    psutil \
+    pyodbc
+
 # Set environment variables.
 
 ENV SENZING_ROOT=/opt/senzing
 ENV PYTHONPATH=${SENZING_ROOT}/g2/python
 ENV LD_LIBRARY_PATH=${SENZING_ROOT}/g2/lib:${SENZING_ROOT}/g2/lib/debian
-ENV SENZING_COMMAND="python"
 
 # Copy files from repository.
 
@@ -40,4 +45,4 @@ COPY ./rootfs /
 # Runtime execution.
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-CMD [""]
+CMD ["python"]

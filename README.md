@@ -6,6 +6,11 @@ The `senzing/python-postgresql-base` docker image is a Senzing-ready, python 2.7
 The image can be used in a Dockerfile `FROM senzing/python-base` statement to simplify
 building apps with Senzing.
 
+To see how to use the `senzing/python-postgresql-base` docker image, see
+[github.com/senzing/docker-python-demo](https://github.com/senzing/docker-python-demo).
+To see a demonstration of senzing, python, and postgresql, see
+[github.com/senzing/docker-compose-postgresql-demo](https://github.com/senzing/docker-compose-postgresql-demo).
+
 ### Contents
 
 1. [Expectations](#expectations)
@@ -71,7 +76,10 @@ sudo docker build \
     ```console
     export SENZING_DIR=/opt/senzing
 
-    sudo docker run -it  \
+    sudo docker run \
+      --interactive \
+      --rm \
+      --tty \
       --volume ${SENZING_DIR}:/opt/senzing \
       senzing/python-postgresql-base
     ```
@@ -91,9 +99,12 @@ sudo docker build \
     export SENZING_DATABASE_URL="${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
     export SENZING_DIR=/opt/senzing
 
-    sudo docker run -it  \
-      --volume ${SENZING_DIR}:/opt/senzing \
+    sudo docker run \
       --env SENZING_DATABASE_URL="${SENZING_DATABASE_URL}" \
+      --interactive \
+      --rm \
+      --tty \
+      --volume ${SENZING_DIR}:/opt/senzing \
       senzing/python-postgresql-base
     ```
 
@@ -123,11 +134,14 @@ sudo docker build \
     export SENZING_DATABASE_URL="${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
     export SENZING_DIR=/opt/senzing
 
-    sudo docker run -it  \
-      --volume ${SENZING_DIR}:/opt/senzing \
-      --net ${SENZING_NETWORK} \
+    sudo docker run \
       --env SENZING_DATABASE_URL="${SENZING_DATABASE_URL}" \
-      senzing/python-base
+      --interactive \
+      --net ${SENZING_NETWORK} \
+      --rm \
+      --tty \
+      --volume ${SENZING_DIR}:/opt/senzing \
+      senzing/python-postgresql-base
     ```
 
 ## Develop
