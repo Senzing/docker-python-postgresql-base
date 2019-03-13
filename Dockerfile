@@ -26,6 +26,12 @@ RUN apt-get update \
       wget \
  && rm -rf /var/lib/apt/lists/*
 
+# Install packages via pip.
+
+RUN pip install \
+    psutil \
+    pyodbc
+
 # Set environment variables.
 
 ENV SENZING_ROOT=/opt/senzing
