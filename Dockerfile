@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=debian:9
 FROM ${BASE_IMAGE}
 
-ENV REFRESHED_AT=2019-03-09
+ENV REFRESHED_AT=2019-03-22
 
 LABEL Name="senzing/python-postgresql-base" \
       Version="1.0.0"
