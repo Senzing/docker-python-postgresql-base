@@ -1,5 +1,12 @@
 # docker-python-postgresql-base
 
+## :no_entry: Deprecated
+
+This repository is deprecated and has been replaced by
+[docker-senzing-base](https://github.com/Senzing/docker-senzing-base).
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ## Overview
 
 The `senzing/python-postgresql-base` docker image is a Senzing-ready, python 2.7 image.
